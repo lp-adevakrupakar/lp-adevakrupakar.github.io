@@ -1,0 +1,9 @@
+***********************************************************************************DISCLAIMER************************************************************************************
+ NOTE: By downloading and using this software you expressly agree to the following:
+ This software is for the limited use only in connection with the LivePerson services purchased by you. 
+ Once the LivePerson services are no longer in use, you must cease all use of the software and destroy all copies. 
+ The software is provided to you "as is" and without any warranty of any kind, express, implied or otherwise, including without limitation, any warranty of merchantability or fitness for a particular purpose.  
+ In no event shall LivePerson or any of its affiliates be liable for any direct, indirect, special, incidental, or consequential damages or any other damages of any kind, whether LivePerson
+ or any of its affiliates have been advised of the possibility of such loss, however caused, and on any theory of liability, arising out of or related to the possession, use or performance of this software.  
+ IF YOU DO NOT AGREE TO THE FOREGOING TERMS, DO NOT DOWNLOAD THE SOFTWARE OR USE THE SOFTWARE.
+***********************************************************************************DISCLAIMER************************************************************************************

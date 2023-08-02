@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <!-- This tag is not mandatory, but is required for the smooth functioning of the embedded chat window on mobile devices -->
+  <meta name="viewport" content="width=device-width, maximum-scale=1.0">
+  <title>Close window after survey/Inactivity LE 2.0 Code Pack Example</title>
+
+  <!-- le-mtagconfig.js must be called from every page. Please update src accordingly -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+ 
+  <script type="text/javascript" src="le-mtagconfig.js"></script>
+
+  <script type="text/javascript">
+    // Use lpTag.section to determine the appropriate Location for engaging with visitors, or to display where those visitors are browsing.
+    // It can contain multiple values so you can assign a page to multiple location groups and/or use hierarchy. All values are in lower case.
+    //Legend:
+    lpTag.section = [ //SET A LIST OF YOUR SITE LOCATION GROUPS
+      "test-page",
+    ];
+
+    // Engagement Attributes (or SDE's) are information objects sent to LP from the page can both be used by the agent and the LE2.0 engine to trigger engaements.
+    lpTag.sdes = lpTag.sdes || []; //Always include the declaration of the SDE's array.
+    // Every SDE an object containing information in JSON format. Each has a "type" attribute that is mandatory. Anything else is optional.
+    
+    // the Auto close behaviour leverages the 'Ended' event in the window. We can do this by binding to the eventname using the unified window app.
+    // var closeLpWindow = function(data, eventInfo){
+    //   if(window.console && window.JSON){ 
+    //     console.log("In closeWindow");
+    //     if( data.state === "ended") {
+    //       console.log("In closeWindow ended");
+    //       $( '.lpc_maximized-header__close-button' ).click();
+    //     }
+    //   }
+    // }
+    //Public documentation event binding https://developers.liveperson.com/web-tag-events-event-binding.html
+    //lpTag.events.bind("lpUnifiedWindow", "state", closeLpWindow);
+
+    lpTag.events.bind(  { appName: "LP_OFFERS",
+      eventName: "OFFER_IMPRESSION",func: (event)=>{
+
+        console.log("Test"+event);
+   
+        //Binding to engagement's LP_OFFERs event
+        lpTag.unifiedWindow.addLanguage({
+          // Window States
+          chattingWith: "{{agent_name}}",
+          connecting: "연결 중",
+          message_us: "저희에게 메시지",
+          ended: "감사합니다",
+          loader_title: "로드 중",
+          chatting: "채팅",
+          preChat: "우리와 채팅",
+          preSms: "문자로 연락",
+          postChat: "감사합니다",
+          offline: "연락처",
+          endedAndTranscriptShown: "채팅 대화 내용",
+          windowRegionLabel: "채팅 창",
+
+          //Closing window while in chat with X
+          closeWindowAreYouSureMsg: "닫으면 대화가 종료됩니다",
+          closeWindowOkBtn: "확인",
+          closeWindowCancelBtn: "취소",
+
+          //Closing chat while in chat with the chat X button
+          closeChatAreYouSureMsg: "채팅 상담을 종료하시겠습니까?",
+          closeChatDisconnectBtn: "상담 종료",
+          closeChatCancelBtn: "취소",
+
+          //Tooltips
+          tooltip_NewMessageNotification: "{{notificationCount}}개의 새 {{notificationMsg}}이(가) 있습니다",
+          tooltip_EmailTranscriptSentConfirmation: "채팅이 끝난 후에 대화 내용을 전송할 것입니다",
+          tooltip_Message: "메시지",
+          tooltip_Messages: "메시지",
+          tooltip_Close: "닫기",
+          tooltip_Download: "파일을 다운로드하려면 팝업을 허용해야 합니다",
+          tooltip_ExpandActionMenu: "동작 메뉴",
+          tooltip_CollapseActionMenu: "동작 메뉴",
+          tooltip_SendIcon: "보내기",
+          tooltip_SendIconDisabled: "채팅에 연결되어 있지 않습니다.",
+          tooltip_Minimize: "최소화",
+          tooltip_Maximize: "최대화",
+          tooltip_MuteButton: "음소거",
+          tooltip_UnmuteButton: "음소거 해제",
+          tooltip_Print: "대화 내용 인쇄",
+          tooltip_Email: "이메일 대화 내용",
+          tooltip_EndChat: "대화 끝내기",
+          tooltip_Popout: "팝아웃",
+          tooltip_Popin: "팝인",
+          tooltip_Lock: "보안 채팅입니다",
+          tooltip_Loader: "로드 중",
+          tooltip_EmailClearField: "선택을 취소",
+          tooltip_AutoBlockCreditCardPatternsMessage: "귀하의 일부 개인 상세 정보가 표시되는 것을 차단했습니다.  대화 중에 개인적 또는 민감한 정보를 공유하지 마십시오.",
+          tooltip_open_widgets: "위젯 열기",
+          tooltip_close_widgets: "위젯 닫기",
+          tooltip_refresh_slider: "위젯 새로 고치기",
+          tooltip_minimize_slider: "위젯 최소화",
+          tooltip_maximize_slider: "위젯 최대화",
+          tooltip_ConnectionIssue: "연결을 사용할 수 없음",
+          tooltip_ConnectionReEstablished: "연결이 다시 수립됨",
+          tooltip_CloseToStartChat: "채팅을 시작하려면 이 창을 닫으십시오.",
+          tooltip_CloseToStartConversation: "메시지 채팅을 시작하려면 이 창을 닫으십시오.",
+          tooltip_FileTypeValidation: "허용되는 파일 형식은 PNG, JPG 또는 GIF입니다",
+          tooltip_FileTypeValidationExpanded: "파일 형식은 PNG, JPG, GIF, PDF, DOCX, XLSX 또는 PPTX여야 합니다",
+          tooltip_FileSizeValidation: "파일 크기는 5MB 이하 여야합니다",
+          tooltip_FileSizeValidation15: "파일 크기는 15MB 이하여야 합니다",
+          tooltip_EmojiIcon: "이모지 선택기",
+
+          //Window string
+          windowTitle: "도움이 필요하신가요?",
+          defaultTextBoxText: "메시지를 입력",
+          welcomeMessage: "무엇을 도와 드릴까요?",
+          thankYouMessage: "연락해 주셔서 감사합니다",
+          thankYouMessagePreSms: "{{phoneNumber}}(으)로 텍스트 전환을 시작했습니다. 담당자가 곧 문자로 연락을 드릴 것입니다.",
+          visitorChatLineSentError: "메시지 보내기 오류",
+          dragFilesMessage: "파일을 여기에 끌어 놓기",
+          dropFilesMessage: "파일을 여기에 끌어 놓기",
+          at: " ",
+          me: "나",
+          you: " ",
+          info: " ",
+          agent: "상담사",
+
+          //External re-authentication
+          authExpired: "확인이 만료되었습니다. 다시 로그인으로 리디렉션 됩니다. 여기를 눌러서 즉시 리디렉션 됩니다.",
+          unauthExpired: "확인이 만료되었습니다. 아래를 클릭하여 대화를 다시 로드.",
+          reload: "재 로드",
+          redirect: "리디렉션",
+          relogin: "세션이 만료됨",
+
+          secureForm_line_send: "{{agentName}}이(가) 다음 보안 양식을 보냈습니다: {{secureFormName}}",
+          secureForm_link_title_send: "{{agentName}}이(가) 다음 보안 양식을 보냈습니다",
+          secureForm_line_submit: "다음 보안 양식이 제출되었습니다: {{secureFormName}}",
+          secureForm_link_title_submit: "다음 보안 양식이 제출되었습니다",
+          secureFormSubmittedMessage: "양식을 성공적으로 보냈습니다. <br> 정보를 보호하기 위해서 제출한 양식은 다시 열 수 없습니다.",
+          secureFormOpenedInAnotherTabMessage: "보안 양식을 로드할 수 없습니다. 상호작용을 시작한 탭에서 보안 양식을 제출하십시오.",
+          secureFormErrorMessage: "보안 양식을 로드할 수 없습니다. <br>도움을 받으시려면 상담사에게 연락하십시오.",
+
+          //Month Names
+          monthJanuary: "1월",
+          monthFebruary: "2월",
+          monthMarch: "3월",
+          monthApril: "4월",
+          monthMay: "5월",
+          monthJune: "6월",
+          monthJuly: "7월",
+          monthAugust: "8월",
+          monthSeptember: "9월",
+          monthOctober: "10월",
+          monthNovember: "11월",
+          monthDecember: "12월",
+
+          //Weekday Names
+          weekDaySunday: "일",
+          weekDayMonday: "월",
+          weekDayTuesday: "화",
+          weekDayWednesday: "수",
+          weekDayThursday: "목",
+          weekDayFriday: "금",
+          weekDaySaturday: "토",
+
+          daySuffix: "",
+          dayMonthGap: " ",
+
+          //Alt text
+          logoAltText: "로고",
+          agentPicAltText: "에이전트 사진",
+          lpLogo: "LivePerson 로고",
+          errorIconAltText: "오류",
+          a11yNewMessage: "새 메시지",
+          a11yNewStructuredContent: "위에 새 메시지 양식 옵션이 있을 수 있습니다.",
+
+          //Send email transcript
+          dialog_email_transcript: "대화 내용을 보내기:",
+          EmailTranscriptAction: "대화 내용\n이메일 발송",
+          inputEmailError: "유효한 이메일 주소를 입력하십시오. 형식: you@domain.com",
+          defaultEmailInputText: "이메일 입력*",
+
+          transcriptSubject: "채팅 대화 내용",
+
+          //Transcript Area
+          transcriptAreaLabel: "채팅 메시지",
+          transcriptConvResolvedByAgent: "상담이 종료되었습니다.{{time}}",
+          transcriptConvResolvedByVisitor: "상담이 종료되었습니다.{{time}}",
+          transcriptTtrMessage: "{{time}}(으)로 응답할 것입니다.",
+          transcriptShortlyMessage: "상담사가 곧 응답할 것입니다",
+          transcriptTtrOffHoursMessage: "현재 근무하지 않는 시간입니다. {{time}}(으)로 답변할 것입니다.",
+          transcriptForPhotoSharingImage: "공유 콘텐츠가 사용 가능하지 않습니다",
+          transcriptRotatorDefaultMessage: "기록을 로드 중",
+          transcriptRotatorFirstMessage: "아직 로드 중",
+          transcriptRotatorSecondMessage: "기록 로드에 실패했습니다. ",
+          transcriptRotatorLinkText: "다시 시도",
+          transcriptPossibleMessages: "마지막 로그인 후에 새 메시지가 있을 수 있습니다. 위를 확인하세요",
+          transcriptPossibleMessagesShort: "새 메시지가 있을 수 있습니다",
+          transcriptHistoryButtonDisplayText: "이전 표시",
+          transcriptHistoryButtonAriaLabelText: "이전 대화 표시 버튼",
+
+          // ID&V
+          idnvDialogTitle: "{{idnvType}}에서 {{idnvChar1}} 및 {{idnvChar2}} 문자를 입력하십시오.",
+          idnvInputError: "필수 필드를 모두 작성하십시오.",
+          idnvFormCancelled: "식별 양식이 제출되지 않았습니다.",
+          idnvFormSubmitted: "{{idnvType}}에서 {{idnvChar1}} 및 {{idnvChar2}} 문자를 제출했습니다.",
+          idnvAnswer: "문자는 {{idnvAnswer1}} 및 {{idnvAnswer2}}입니다.",
+          idnvSendLineError: "식별 양식을 제출할 수 없습니다.",
+
+          //Actions
+          MuteSoundAction: "음소거",
+          UnmuteSoundAction: "음소거 해제",
+          PrintTranscriptAction: "대화 내용\n인쇄",
+          MarkUrgentAction: "긴급으로 표시",
+          DismissUrgentAction: "긴급 해제",
+          EndChatAction: "대화\n끝내기",
+          PopOutAction: "팝아웃",
+          PopInAction: "팝인",
+          PopOutAction_topbar: "클릭하여 팝아웃",
+          PopInAction_topbar: "클릭하여 팝인",
+          ForgetMeAction: "기록 지우기",
+          SharePhotoAction: "사진\n보내기",
+          AddAttachmentAction: "첨부파일\n추가",
+
+          //Failed to connect page
+          error: "오류",
+          couldNotConnect: "이런 - 연결할 수 없습니다",
+          tryAgain: "다시 시도",
+          loadingOnMinimize: "로드 중",
+          loading: "로드 중",
+          unableToConnect: "연결할 수 없습니다",
+          reconnect: "다시 연결을 시도하는 중",
+          chatEndedOnExternalWindow: "새 채팅을 시작하려면 창을 닫습니다",
+          externalWindowOpen: "진행 중인 채팅이 있습니다. 그 창으로 다시 돌아가서 채팅을 계속합니다.",
+          unsupportedBrowserMode: "브라우저가 시크릿 모드이거나 타사의 쿠키를 차단하고 있습니다. 일반 브라우저 세션을 시작하여 채팅하거나 브라우저 개인 정보 설정을 확인하십시오",
+          cannotResumeChat: "상호작용을 시작한 탭에서 채팅을 다시 시작합니다",
+          crossDomainError: "대화를 다시 시작할 수 없습니다. 이전 페이지로 돌아가서 계속 하십시오.",
+          chatAuthError: "이전 페이지로 돌아가거나 로그인하여 대화를 계속합니다.",
+          confirmMessage: "이 대화를 닫으면 뒤로 돌아가거나 로그인하여도 계속할 수 없습니다. 정말로 계속하시겠습니까?",
+          startConversationError: "페이지를 새로 고쳐서 새 대화를 시작하십시오.",
+          connectionUnavailable: "연결을 사용할 수 없음",
+          sessionExpired: "세션이 만료됨",
+          sessionError: "세션이 만료되었습니다. 다시 시작하려면 이 창을 닫고 새 대화를 시작하십시오.",
+          sharkSessionExpired: "페이지를 새로 고쳐서 새 대화를 시작하십시오.",
+
+          //agent is typing widget
+          agentIsTypingText: "입력 중...",
+
+          //forget me alert - deprecated
+          forget_me_dialog: "정말로 대화 기록을 지우시겠습니까?",
+          forget_me_dialog_subtitle_on_active_chat: "“예”를 선택하시는 경우, 대화는 종료되고 대화 기록은 더 이상 이 장치에서 사용할 수 없습니다.",
+          forget_me_dialog_subtitle: "“예”를 선택하시는 경우, 대화는 종료되고 대화 기록은 더 이상 이 장치에서 사용할 수 없습니다.",
+
+          //forget me alert - new close window behaviour
+          forget_me_dialog_close_window: "정말로 대화 기록을 지우시겠습니까?",
+          forget_me_dialog_subtitle_on_active_chat_close_window: "“예”를 선택하시는 경우, 대화는 자동으로 종료되고 대화 기록은 창을 다시 열 때 더 이상 사용할 수 없습니다.",
+          forget_me_dialog_subtitle_close_window: "“예”를 선택하시는 경우, 대화는 자동으로 종료되고 대화 기록은 창을 다시 열 때 더 이상 사용할 수 없습니다.",
+
+          //Are you sure you want to end conversation
+          end_chat_alert: "정말로 채팅을 종료하시겠습니까?",
+          yes: "예",
+          no: "아니오",
+
+          //Surveys
+          preChatButton: "제출",
+          surveyRequireField: "필수 필드를 완성해 주십시오",
+          surveyRequireOption: "필수 필드입니다. 옵션을 선택하십시오.",
+          surveyRequireCheckbox: "필수 필드입니다. 최소한 한 옵션을 선택하십시오.",
+          surveyRequireNumericField: "이 필드에는 숫자만 사용할 수 있습니다",
+          surveyRequireValidEmail: "유효한 이메일 주소를 입력하십시오. 형식: you@domain.com",
+          surveyRequireValidPhone: "유효한 전화 번호를 입력하십시오.",
+          surveyMaximumChars: "이 필드에는 {{specify_number}} 글자 이상을 포함할 수 없습니다",
+          surveyIllilgalCharacters: "입력한 한 글자 이상이 잘못되었습니다. 다음을 사용하지 마십시오: &lt;, &gt;, &quot;",
+          surveyGeneralError: "오류가 발생했습니다. 설문 조사를 검토하고 다시 보내십시오.",
+          surveyLabel: "설문 조사 작성",
+
+          offlineButton: "제출",
+          exitButton: "제출",
+          defaultSelect: "목록에서 항목 선택",
+          defaultTextArea: "메시지를 입력",
+          submit: "제출",
+          back: "뒤로",
+          next: "다음",
+          startChat: "채팅",
+
+          closeWindowText: "활성 참여가 있습니다",
+          cancel: "취소",
+          ok: "확인",
+          close: "닫기",
+          send: "보내기",
+          insertTextHere: "메시지를 입력해주세요.",
+
+          //error messages
+          IN_SESSION: "상호작용을 시작한 탭에서 채팅을 다시 시작합니다",
+          IN_PRE_CHAT: "설문조사가 있는 탭으로 돌아가서 채팅을 시작합니다",
+          IN_CHAT: "페이지를 다시 고쳐서 채팅을 다시 시작합니다",
+
+          //captcha
+          captchaTitle: "우리와 채팅",
+          captchaEnterText: "표시된 텍스트 입력",
+          captchaRefreshButton: "다른 텍스트 시도",
+          captchaAudioButton: "오디오 시도",
+          captchaTextButton: "텍스트 시도",
+          captchaMessageError: " 확인에 실패했습니다. 다시 시도하십시오.",
+          captchaAccessDenied: "최대 시도 횟수를 초과했습니다",
+
+          //web messaging
+          messagingState_PENDING: "보류 중",
+          messagingState_SENT: "보냄",
+          messagingState_ACCEPT: "전달함",
+          messagingState_READ: "읽음",
+          messagingState_ERROR: "전달하지 않음",
+          messagingState_image_ERROR: "업로드에 실패했습니다.<br>다른 파일을 시도하십시오.",
+          messagingState_image_RETRY: "업로드에 실패했습니다.<br>다시 시도하십시오.",
+
+          //CSAT
+          csatLevel_0: "",
+          csatLevel_1: "매우 불만",
+          csatLevel_2: "불만",
+          csatLevel_3: "보통",
+          csatLevel_4: "만족",
+          csatLevel_5: "매우 만족",
+
+          outOf: "/", //Context: 4 out of 5
+
+          // hardcoded CSAT text
+          csatTheAgent: "에이전트",
+          csatRatingQuestion: "{{agentName}}와(과) 상담은 만족스러우셨나요?",
+          csatDisclaimer: "고객님의 만족도 평가는 상담 서비스 향상에 많은 도움이 됩니다.<br>더 나은 상담 서비스를 제공할 수 있도록 평가해 주시기 바랍니다.",
+
+          // CoBrowse
+          cobrowseInvitation: "우리 웹사이트를 보여 줄 수 있도록 동시 브라우즈 세션에 참여하도록 초청했습니다. 시작하려면 수락을 클릭하십시오.",
+          cobrowseAcceptBtn: "수락",
+          cobrowseRejectBtn: "거부",
+          cobrowseInvitationHeading: "동시 브라우즈 초대",
+          cobrowseInvitationMinimizeTitle: "초대 해제",
+          cobrowseSessionStarting: "동시 브라우즈 세션을 시작하는 중…",
+          cobrowseInvitationRejected: "동시 브라우즈 초대가 거부되었습니다.",
+          cobrowseLine_cobrowseAccepted: "동시 브라우즈 초대 수락함",
+          cobrowseLine_cobrowseDeclined: "동시 브라우즈 초대 거절함",
+          cobrowseLine_cobrowseTimeout: "동시 브라우즈 초대가 시간이 초과했습니다.",
+          cobrowseLine_cobrowseOffered: "{{agentName}}이(가) 귀하를 동시 브라우즈 세션에 초대했습니다.",
+          cobrowseLine_cobrowseCanceled: "동시 브라우즈 초대가 {{agentName}}에 의해 취소되었습니다.",
+
+          video_cobrowseInvitation: "영상 통화에 초대되었습니다.<br>시작하려면 수락 을 눌러주시기 바랍니다.",
+          video_cobrowseConnecting: "연결 중",
+          video_cobrowseConnectingPermission: "카메라 및 마이크 액세스가 필요합니다. <br> 브라우저에서 요청할 때 이 사용 권한을 수락하십시오.",
+          video_cobrowseAcceptBtn: "수락",
+          video_cobrowseRejectBtn: "거부",
+          video_cobrowseInvitationHeading: "영상 통화",
+          video_cobrowseSessionStarting: "통화를 시작하는 중...",
+          video_cobrowseInvitationRejected: "통화가 거부되었습니다",
+          video_cobrowseLine_cobrowseAccepted: "통화가 수락됨",
+          video_cobrowseLine_cobrowseDeclined: "통화가 거부됨",
+          video_cobrowseLine_cobrowseTimeout: "{{agentName}}의 전화를 받지 못했습니다.",
+          video_cobrowseLine_cobrowseOffered: "{{agentName}}이(가) 통화를 요청했습니다.",
+          video_cobrowseLine_cobrowseCanceled: "{{agentName}}이(가) 통화를 취소했습니다.",
+          video_cobrowseActiveCallTooltip: "영상 통화 중입니다",
+          video_cobrowseActiveCallTooltipMaximizeTitle: "영상 채팅 창 최대화",
+          video_cobrowseInvitationMinimizeTitle: "영상 채팅 창 최소화",
+
+          voice_cobrowseInvitation: "음성 통화에 초대되었습니다.<br>시작하려면 수락 을 눌러주시기 바랍니다.",
+          voice_cobrowseConnecting: "연결 중",
+          voice_cobrowseConnectingPermission: "마이크 액세스가 필요합니다.<br>브라우저에서 요청할 때 이 사용 권한을 수락하십시오.",
+          voice_cobrowseAcceptBtn: "수락",
+          voice_cobrowseRejectBtn: "거부",
+          voice_cobrowseInvitationHeading: "음성 통화",
+          voice_cobrowseSessionStarting: "통화를 시작하는 중...",
+          voice_cobrowseInvitationRejected: "통화가 거부되었습니다",
+          voice_cobrowseLine_cobrowseAccepted: "통화가 수락됨",
+          voice_cobrowseLine_cobrowseDeclined: "통화가 거부됨",
+          voice_cobrowseLine_cobrowseTimeout: "{{agentName}}의 전화를 받지 못했습니다.",
+          voice_cobrowseLine_cobrowseOffered: "{{agentName}}이(가) 통화를 요청했습니다.",
+          voice_cobrowseLine_cobrowseCanceled: "{{agentName}}이(가) 통화를 취소했습니다.",
+          voice_cobrowseActiveCallTooltip: "음성 통화 중입니다",
+          voice_cobrowseActiveCallTooltipMaximizeTitle: "음성 채팅 창 최대화",
+          voice_cobrowseInvitationMinimizeTitle: "음성 채팅 창 최소화",
+
+          //Structured Content
+          richContentSent: "&lt;&lt; 리치 콘텐츠를 보냈습니다 &gt;&gt;",
+
+          //Browser Notifications
+          browserNotifications_newMessageTitle: "새 메시지{{agentName}}",
+          browserNotifications_newMessages: "새 메시지",
+          browserNotifications_richContent: "{{agentName}}이(가) 리치 콘텐츠를 공유했습니다",
+          browserNotifications_image: "{{agentName}}이(가) 이미지를 공유했습니다",
+          browserNotifications_file: "{{agentName}}이(가) 파일을 공유했습니다",
+
+          //Timestamps
+          ts_Now: "지금",
+          ts_Today: "오늘",
+          ts_Yesterday: "어제"},{locale:"ko-KR"}); 
+
+      }
+    });
+
+
+    lpTag.hooks.push({
+        name: "AFTER_GET_LINES",
+        callback: function(options) {
+            console.log(JSON.stringify(options));}
+    });
+  
+  </script>
+</head>
+
+<body>
+  <h1> Close window after survey is triggered</h1>
+
+  
+  <!-- Please load the following JS. Make sure it is loaded before the DOMContentLoaded event: -->
+
+
+</body>
+
+</html>
